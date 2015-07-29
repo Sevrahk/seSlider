@@ -1,0 +1,31 @@
+.slider {
+    width: 800px;
+    height: 400px;
+    overflow: hidden;
+}
+
+.slider ul {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    list-style: none;
+}
+
+.slider ul li {
+    width: 800px;
+    float: left;
+}
+
+/* progressBar */
+.progressBar {
+    width: 800px;
+    height: 15px;
+    box-shadow: 0 2px 5px #aaaaaa inset;
+    background: #eee;
+}
+
+.progressBar div {
+    width: 0;
+    height: 100%;
+    background: #ee4444;
+}

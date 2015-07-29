@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Slider</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="../src/jquery.seslider.js"></script>
+    <link href="css/style.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function() {
+            $('.slider').seSlider({
+                playCallback: function() {
+                    console.log('slideshoh started.');
+                },
+                pauseCallback: function() {
+                    console.log('slideshoh paused.');
+                },
+                endCallback: function() {
+                    console.log('slideshoh ended.');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <a href="index.html">Back to homepage</a><br><br>
+    <div class="slider">
+        <ul>
+            <li><img src="img/horsehead.png" alt="Horsehead nebula"></li>
+            <li><img src="img/orion.png" alt="Orion nebula"></li>
+            <li><img src="img/helix.png" alt="Helix nebula"></li>
+            <li><img src="img/rosette.png" alt="Rosette nebula"></li>
+        </ul>
+    </div>
+    <a href="#" class="sliderPrevBtn">Previous</a> | <a href="#" class="sliderNextBtn">Next</a> | <a href="#" class="sliderPlayBtn">Play / pause</a> | <a href="#" class="sliderStopBtn">Stop</a>
+</body>
+</html>

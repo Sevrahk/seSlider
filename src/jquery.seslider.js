@@ -34,7 +34,7 @@
                     if(slideshow.currStep < 1)
                     {
                         if(slideshow.interval !== false)
-                            stopSlideShow(slideshow, true, false);
+                            stopSlideShow(slider, slideshow, true, false);
 
                         slideshow.currStep = slideshow.maxStep;
                     }
@@ -65,7 +65,7 @@
                         slideshow.currStep = 1;
                         if(slideshow.interval !== false)
                         {
-                            stopSlideShow(slideshow, true, false);
+                            stopSlideShow(slider, slideshow, true, false);
                             return;
                         }
                     }
@@ -93,7 +93,7 @@
                 moveRight(slider, slideshow, false);
 
                 if(slideshow.currStep >= slideshow.maxStep)
-                    stopSlideShow(slideshow, true, false);
+                    stopSlideShow(slider, slideshow, true, false);
             }, params.slideshowIntervalTime);
 
             if(params.slideshowSoundTrack !== null)
@@ -103,7 +103,7 @@
                 params.playCallback();
         }
 
-        function stopSlideShow(slideshow, endReached, reset)
+        function stopSlideShow(slider, slideshow, endReached, reset)
         {
             if(slideshow.interval !== false)
             {
@@ -116,8 +116,9 @@
 
             if(endReached === true || reset === true)
             {
+                slider.finish();
                 if(reset === true && slideshow.currStep !== 1)
-                    $('.slider').find('li').slice(slideshow.maxStep - (slideshow.currStep - 1)).prependTo('.slider ul');
+                    slider.find('li').slice(slideshow.maxStep - (slideshow.currStep - 1)).prependTo(slider);
 
                 slideshow.currStep = 1;
                 slideshow.elapsedTime = 0;
@@ -191,7 +192,7 @@
             //Reset button
             $(params.resetBtn).on('touchstart click', function(e) {
                 e.preventDefault();
-                stopSlideShow(slideshow, true, true);
+                stopSlideShow(obj, slideshow, true, true);
             });
 
             //SlideShow play
@@ -200,7 +201,7 @@
                 if(slideshow.interval === false)
                     playSlideShow(obj, slideshow);
                 else
-                    stopSlideShow(slideshow, false, false);
+                    stopSlideShow(obj, slideshow, false, false);
             });
         });
     };
