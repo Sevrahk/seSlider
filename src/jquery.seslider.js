@@ -116,6 +116,7 @@
 
             if(endReached === true || reset === true)
             {
+                slider.finish();
                 if(reset === true && slideshow.currStep !== 1)
                     slider.find('li').slice(slideshow.maxStep - (slideshow.currStep - 1)).prependTo(slider);
 
