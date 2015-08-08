@@ -192,7 +192,7 @@
             //Reset button
             $(params.resetBtn).on('touchstart click', function(e) {
                 e.preventDefault();
-                stopSlideShow(obj, slideshow, true, true);
+                stopSlideShow(obj, slideshow, false, true);
             });
 
             //SlideShow play
