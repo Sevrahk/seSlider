@@ -109,7 +109,7 @@
             {
                 clearInterval(slideshow.interval);
                 slideshow.interval = false;
-                
+
                 if(params.slideshowSoundTrack !== null)
                     $(params.slideshowSoundTrack).get(0).pause();
             }
@@ -167,7 +167,7 @@
             }
 
             obj.css({width: slideWidth * slideshow.maxStep, marginLeft: - slideWidth});
-            
+
             if(params.autoPlay === true)
                 playSlideShow(obj, slideshow);
 
