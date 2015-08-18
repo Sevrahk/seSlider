@@ -18,7 +18,7 @@
         };
         var params = $.extend(defaults, options);
 
-        function moveLeft(slider, slideshow, btnClicked) {
+        function moveLeft(slider, slideshow) {
             if(params.preventReversedCycle === true && slideshow.currStep <= 1)
                 return;
 
@@ -29,24 +29,17 @@
                 slider.find('li').last().prependTo(slider);
                 slider.css('left', '');
 
-                if(btnClicked === true)
+                if(slideshow.currStep < 1)
                 {
-                    if(slideshow.currStep < 1)
-                    {
-                        if(slideshow.interval !== false)
-                            stopSlideShow(slider, slideshow, true, false);
+                    if(slideshow.interval !== false)
+                        stopSlideShow(slider, slideshow, true, false);
 
-                        slideshow.currStep = slideshow.maxStep;
-                    }
-
-                    if(params.slideshowSteps === null)
-                        slideshow.elapsedTime = params.slideshowIntervalTime * (slideshow.currStep - 1);
-                    else
-                        slideshow.elapsedTime = params.slideshowSteps[slideshow.currStep - 2] || 0;
-
-                    updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
-                    updateSoundTrackTime(slideshow.elapsedTime / 1000);
+                    slideshow.currStep = slideshow.maxStep;
                 }
+
+                updateElapsedTime(slideshow);
+                updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
+                updateSoundTrackTime(slideshow.elapsedTime / 1000);
             });
         }
 
@@ -58,23 +51,19 @@
                 slider.find('li').first().appendTo(slider);
                 slider.css('left', '');
 
+                if(slideshow.currStep > slideshow.maxStep)
+                {
+                    slideshow.currStep = 1;
+                    if(slideshow.interval !== false)
+                    {
+                        stopSlideShow(slider, slideshow, true, false);
+                        return;
+                    }
+                }
+
                 if(btnClicked === true)
                 {
-                    if(slideshow.currStep > slideshow.maxStep)
-                    {
-                        slideshow.currStep = 1;
-                        if(slideshow.interval !== false)
-                        {
-                            stopSlideShow(slider, slideshow, true, false);
-                            return;
-                        }
-                    }
-
-                    if(params.slideshowSteps === null)
-                        slideshow.elapsedTime = params.slideshowIntervalTime * (slideshow.currStep - 1);
-                    else
-                        slideshow.elapsedTime = params.slideshowSteps[slideshow.currStep - 2] || 0;
-
+                    updateElapsedTime(slideshow);
                     updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
                     updateSoundTrackTime(slideshow.elapsedTime / 1000);
                 }
@@ -87,13 +76,8 @@
                 slideshow.elapsedTime += params.slideshowIntervalTime;
                 updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
 
-                if(params.slideshowSteps !== null && params.slideshowSteps[slideshow.currStep - 1] > slideshow.elapsedTime)
-                    return;
-
-                moveRight(slider, slideshow, false);
-
-                if(slideshow.currStep >= slideshow.maxStep)
-                    stopSlideShow(slider, slideshow, true, false);
+                if(params.slideshowSteps === null || params.slideshowSteps[slideshow.currStep - 1] <= slideshow.elapsedTime)
+                    moveRight(slider, slideshow, false);
             }, params.slideshowIntervalTime);
 
             if(params.slideshowSoundTrack !== null)
@@ -130,6 +114,14 @@
             }
             else if(typeof params.pauseCallback === 'function')
                 params.pauseCallback();
+        }
+
+        function updateElapsedTime(slideshow)
+        {
+            if(params.slideshowSteps === null)
+                slideshow.elapsedTime = params.slideshowIntervalTime * (slideshow.currStep - 1);
+            else
+                slideshow.elapsedTime = params.slideshowSteps[slideshow.currStep - 2] || 0;
         }
 
         function updateProgressBar(size)
@@ -186,7 +178,7 @@
                 if(obj.css('left') !== 'auto')
                     return;
 
-                moveLeft(obj, slideshow, true);
+                moveLeft(obj, slideshow);
             });
 
             //Reset button
