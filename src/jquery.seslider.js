@@ -43,7 +43,7 @@
             });
         }
 
-        function moveRight(slider, slideshow, btnClicked) {
+        function moveRight(slider, slideshow, updateComponents) {
             slider.animate({
                 left: - slider.children('li').width()
             }, params.transitionSpeed, function() {
@@ -61,7 +61,7 @@
                     }
                 }
 
-                if(btnClicked === true)
+                if(updateComponents === true)
                 {
                     updateElapsedTime(slideshow);
                     updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
