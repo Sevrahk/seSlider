@@ -7,6 +7,8 @@
             resetBtn: '.sliderResetBtn',
             preventReversedCycle: false,
             progressBar: null,
+            changeCallback: null,
+            afterChangeCallback: null,
             playCallback: null,
             pauseCallback: null,
             endCallback: null,
@@ -16,11 +18,21 @@
             slideshowIntervalTime: 1000,
             transitionSpeed: 200
         };
-        var params = $.extend(defaults, options);
+        var params = $.extend(defaults, options),
+            changeCallbacks = $.Callbacks(),
+            afterChangeCallbacks = $.Callbacks();
 
-        function moveLeft(slider, slideshow, btnClicked) {
-            if(params.preventReversedCycle === true && slideshow.currStep <= 1)
+        if(typeof params.changeCallback === 'function')
+            changeCallbacks.add(params.changeCallback);
+
+        if(typeof params.afterChangeCallback === 'function')
+            afterChangeCallbacks.add(params.afterChangeCallback);
+
+        function moveLeft(slider, slideshow) {
+            if(params.preventReversedCycle === true && slideshow.currStep <= 0)
                 return;
+
+            changeCallbacks.fire(slideshow.currStep, slideshow.currStep - 1, 'left');
 
             slider.animate({
                 left: + slider.children('li').width()
@@ -29,28 +41,24 @@
                 slider.find('li').last().prependTo(slider);
                 slider.css('left', '');
 
-                if(btnClicked === true)
+                if(slideshow.currStep < 0)
                 {
-                    if(slideshow.currStep < 1)
-                    {
-                        if(slideshow.interval !== false)
-                            stopSlideShow(slider, slideshow, true, false);
+                    if(slideshow.interval !== false)
+                        stopSlideShow(slider, slideshow, true, false);
 
-                        slideshow.currStep = slideshow.maxStep;
-                    }
-
-                    if(params.slideshowSteps === null)
-                        slideshow.elapsedTime = params.slideshowIntervalTime * (slideshow.currStep - 1);
-                    else
-                        slideshow.elapsedTime = params.slideshowSteps[slideshow.currStep - 2] || 0;
-
-                    updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
-                    updateSoundTrackTime(slideshow.elapsedTime / 1000);
+                    slideshow.currStep = slideshow.maxStep;
                 }
+
+                afterChangeCallbacks.fire(slideshow.currStep);
+                updateElapsedTime(slideshow);
+                updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
+                updateSoundTrackTime(slideshow.elapsedTime / 1000);
             });
         }
 
-        function moveRight(slider, slideshow, btnClicked) {
+        function moveRight(slider, slideshow, updateComponents) {
+            changeCallbacks.fire(slideshow.currStep, slideshow.currStep + 1, 'right');
+
             slider.animate({
                 left: - slider.children('li').width()
             }, params.transitionSpeed, function() {
@@ -58,23 +66,20 @@
                 slider.find('li').first().appendTo(slider);
                 slider.css('left', '');
 
-                if(btnClicked === true)
+                if(slideshow.currStep > slideshow.maxStep)
                 {
-                    if(slideshow.currStep > slideshow.maxStep)
+                    slideshow.currStep = 1;
+                    if(slideshow.interval !== false)
                     {
-                        slideshow.currStep = 1;
-                        if(slideshow.interval !== false)
-                        {
-                            stopSlideShow(slider, slideshow, true, false);
-                            return;
-                        }
+                        stopSlideShow(slider, slideshow, true, false);
+                        updateComponents = false;
                     }
+                }
 
-                    if(params.slideshowSteps === null)
-                        slideshow.elapsedTime = params.slideshowIntervalTime * (slideshow.currStep - 1);
-                    else
-                        slideshow.elapsedTime = params.slideshowSteps[slideshow.currStep - 2] || 0;
-
+                afterChangeCallbacks.fire(slideshow.currStep);
+                if(updateComponents === true)
+                {
+                    updateElapsedTime(slideshow);
                     updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
                     updateSoundTrackTime(slideshow.elapsedTime / 1000);
                 }
@@ -87,13 +92,8 @@
                 slideshow.elapsedTime += params.slideshowIntervalTime;
                 updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
 
-                if(params.slideshowSteps !== null && params.slideshowSteps[slideshow.currStep - 1] > slideshow.elapsedTime)
-                    return;
-
-                moveRight(slider, slideshow, false);
-
-                if(slideshow.currStep >= slideshow.maxStep)
-                    stopSlideShow(slider, slideshow, true, false);
+                if(params.slideshowSteps === null || params.slideshowSteps[slideshow.currStep] <= slideshow.elapsedTime)
+                    moveRight(slider, slideshow, false);
             }, params.slideshowIntervalTime);
 
             if(params.slideshowSoundTrack !== null)
@@ -109,7 +109,7 @@
             {
                 clearInterval(slideshow.interval);
                 slideshow.interval = false;
-                
+
                 if(params.slideshowSoundTrack !== null)
                     $(params.slideshowSoundTrack).get(0).pause();
             }
@@ -117,10 +117,10 @@
             if(endReached === true || reset === true)
             {
                 slider.finish();
-                if(reset === true && slideshow.currStep !== 1)
-                    slider.find('li').slice(slideshow.maxStep - (slideshow.currStep - 1)).prependTo(slider);
+                if(reset === true && slideshow.currStep !== 0)
+                    slider.find('li').slice((slideshow.maxStep + 1) - slideshow.currStep).prependTo(slider);
 
-                slideshow.currStep = 1;
+                slideshow.currStep = 0;
                 slideshow.elapsedTime = 0;
                 updateProgressBar(0);
                 updateSoundTrackTime(0);
@@ -130,6 +130,14 @@
             }
             else if(typeof params.pauseCallback === 'function')
                 params.pauseCallback();
+        }
+
+        function updateElapsedTime(slideshow)
+        {
+            if(params.slideshowSteps === null)
+                slideshow.elapsedTime = params.slideshowIntervalTime * slideshow.currStep;
+            else
+                slideshow.elapsedTime = params.slideshowSteps[slideshow.currStep - 1] || 0;
         }
 
         function updateProgressBar(size)
@@ -149,11 +157,11 @@
             var slideWidth = obj.children('li').width(),
                 slideshow = {
                 interval: false,
-                maxStep: obj.find('li').length,
-                currStep: 1,
+                maxStep: obj.find('li').length - 1,
+                currStep: 0,
                 elapsedTime: 0
             };
-            slideshow.maxTime = params.slideshowSteps !== null ? params.slideshowSteps[slideshow.maxStep - 1] : params.slideshowIntervalTime * slideshow.maxStep;
+            slideshow.maxTime = params.slideshowSteps !== null ? params.slideshowSteps[slideshow.maxStep] : params.slideshowIntervalTime * (slideshow.maxStep + 1);
 
             if(obj.children('li').length === 1)
                 return true;
@@ -166,8 +174,8 @@
                 obj.append(first).append(last);
             }
 
-            obj.css({width: slideWidth * slideshow.maxStep, marginLeft: - slideWidth});
-            
+            obj.css({width: slideWidth * (slideshow.maxStep + 1), marginLeft: - slideWidth});
+
             if(params.autoPlay === true)
                 playSlideShow(obj, slideshow);
 
@@ -186,13 +194,13 @@
                 if(obj.css('left') !== 'auto')
                     return;
 
-                moveLeft(obj, slideshow, true);
+                moveLeft(obj, slideshow);
             });
 
             //Reset button
             $(params.resetBtn).on('touchstart click', function(e) {
                 e.preventDefault();
-                stopSlideShow(obj, slideshow, true, true);
+                stopSlideShow(obj, slideshow, false, true);
             });
 
             //SlideShow play
