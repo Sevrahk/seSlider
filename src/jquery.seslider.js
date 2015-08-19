@@ -19,7 +19,7 @@
         var params = $.extend(defaults, options);
 
         function moveLeft(slider, slideshow) {
-            if(params.preventReversedCycle === true && slideshow.currStep <= 1)
+            if(params.preventReversedCycle === true && slideshow.currStep <= 0)
                 return;
 
             slider.animate({
@@ -29,7 +29,7 @@
                 slider.find('li').last().prependTo(slider);
                 slider.css('left', '');
 
-                if(slideshow.currStep < 1)
+                if(slideshow.currStep < 0)
                 {
                     if(slideshow.interval !== false)
                         stopSlideShow(slider, slideshow, true, false);
@@ -76,7 +76,7 @@
                 slideshow.elapsedTime += params.slideshowIntervalTime;
                 updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
 
-                if(params.slideshowSteps === null || params.slideshowSteps[slideshow.currStep - 1] <= slideshow.elapsedTime)
+                if(params.slideshowSteps === null || params.slideshowSteps[slideshow.currStep] <= slideshow.elapsedTime)
                     moveRight(slider, slideshow, false);
             }, params.slideshowIntervalTime);
 
@@ -101,10 +101,10 @@
             if(endReached === true || reset === true)
             {
                 slider.finish();
-                if(reset === true && slideshow.currStep !== 1)
-                    slider.find('li').slice(slideshow.maxStep - (slideshow.currStep - 1)).prependTo(slider);
+                if(reset === true && slideshow.currStep !== 0)
+                    slider.find('li').slice((slideshow.maxStep + 1) - slideshow.currStep).prependTo(slider);
 
-                slideshow.currStep = 1;
+                slideshow.currStep = 0;
                 slideshow.elapsedTime = 0;
                 updateProgressBar(0);
                 updateSoundTrackTime(0);
@@ -119,9 +119,9 @@
         function updateElapsedTime(slideshow)
         {
             if(params.slideshowSteps === null)
-                slideshow.elapsedTime = params.slideshowIntervalTime * (slideshow.currStep - 1);
+                slideshow.elapsedTime = params.slideshowIntervalTime * slideshow.currStep;
             else
-                slideshow.elapsedTime = params.slideshowSteps[slideshow.currStep - 2] || 0;
+                slideshow.elapsedTime = params.slideshowSteps[slideshow.currStep - 1] || 0;
         }
 
         function updateProgressBar(size)
@@ -141,11 +141,11 @@
             var slideWidth = obj.children('li').width(),
                 slideshow = {
                 interval: false,
-                maxStep: obj.find('li').length,
-                currStep: 1,
+                maxStep: obj.find('li').length - 1,
+                currStep: 0,
                 elapsedTime: 0
             };
-            slideshow.maxTime = params.slideshowSteps !== null ? params.slideshowSteps[slideshow.maxStep - 1] : params.slideshowIntervalTime * slideshow.maxStep;
+            slideshow.maxTime = params.slideshowSteps !== null ? params.slideshowSteps[slideshow.maxStep] : params.slideshowIntervalTime * (slideshow.maxStep + 1);
 
             if(obj.children('li').length === 1)
                 return true;
@@ -158,7 +158,7 @@
                 obj.append(first).append(last);
             }
 
-            obj.css({width: slideWidth * slideshow.maxStep, marginLeft: - slideWidth});
+            obj.css({width: slideWidth * (slideshow.maxStep + 1), marginLeft: - slideWidth});
 
             if(params.autoPlay === true)
                 playSlideShow(obj, slideshow);
