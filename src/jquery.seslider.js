@@ -7,6 +7,8 @@
             resetBtn: '.sliderResetBtn',
             preventReversedCycle: false,
             progressBar: null,
+            changeCallback: null,
+            afterChangeCallback: null,
             playCallback: null,
             pauseCallback: null,
             endCallback: null,
@@ -16,11 +18,21 @@
             slideshowIntervalTime: 1000,
             transitionSpeed: 200
         };
-        var params = $.extend(defaults, options);
+        var params = $.extend(defaults, options),
+            changeCallbacks = $.Callbacks(),
+            afterChangeCallbacks = $.Callbacks();
+
+        if(typeof params.changeCallback === 'function')
+            changeCallbacks.add(params.changeCallback);
+
+        if(typeof params.afterChangeCallback === 'function')
+            afterChangeCallbacks.add(params.afterChangeCallback);
 
         function moveLeft(slider, slideshow) {
             if(params.preventReversedCycle === true && slideshow.currStep <= 0)
                 return;
+
+            changeCallbacks.fire(slideshow.currStep, slideshow.currStep - 1, 'left');
 
             slider.animate({
                 left: + slider.children('li').width()
@@ -37,6 +49,7 @@
                     slideshow.currStep = slideshow.maxStep;
                 }
 
+                afterChangeCallbacks.fire(slideshow.currStep);
                 updateElapsedTime(slideshow);
                 updateProgressBar(slideshow.elapsedTime / slideshow.maxTime * 100);
                 updateSoundTrackTime(slideshow.elapsedTime / 1000);
@@ -44,6 +57,8 @@
         }
 
         function moveRight(slider, slideshow, updateComponents) {
+            changeCallbacks.fire(slideshow.currStep, slideshow.currStep + 1, 'right');
+
             slider.animate({
                 left: - slider.children('li').width()
             }, params.transitionSpeed, function() {
@@ -57,10 +72,11 @@
                     if(slideshow.interval !== false)
                     {
                         stopSlideShow(slider, slideshow, true, false);
-                        return;
+                        updateComponents = false;
                     }
                 }
 
+                afterChangeCallbacks.fire(slideshow.currStep);
                 if(updateComponents === true)
                 {
                     updateElapsedTime(slideshow);
