@@ -18,7 +18,7 @@ Next, download the package from this site and link the slider Javascript file.
 <!-- jQuery library (served from Google CDN) -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <!-- slider Javascript file -->
-<script src="/js/jquery.seslider-1.0.0.min.js"></script>
+<script src="/js/jquery.seslider.min.js"></script>
 ```
 
 ### Step 2: Create HTML markup ###
@@ -80,9 +80,9 @@ The previous button selector.
 The play/pause button selector.  
 *default: '.sliderPlayBtn'*
 
-- **stopBtn**  
-The stop button selector.  
-*default: '.sliderStopBtn'*
+- **resetBtn**  
+The reset button selector.  
+*default: null*
 
 - **preventReversedCycle**  
 Allow or prevent changing slide if you are on the first slide on click on previous button.  
@@ -91,6 +91,16 @@ Allow or prevent changing slide if you are on the first slide on click on previo
 - **progressBar**  
 The progress bar selector. If the value is different to null the plugin will automaticly update the progressBar.  
 *default: null*
+
+- **changeCallback**  
+Function called when the change slide animation is triggered.  
+*default: null*  
+*Optional parameters: currentSlideIndex, toSlideIndex, direction*
+
+- **afterChangeCallback**  
+Function called after the change slide animation is complete.  
+*default: null*  
+*Optional parameters: newSlideIndex*
 
 - **playCallback**  
 Function called when the slideShow starts.  

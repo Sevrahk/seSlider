@@ -1,6 +1,6 @@
 {
   "name": "seslider",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "jQuery slider plugin for simple sliders, slideshows, and slideshows with soundtrack",
   "main": "src/jquery.seslider.js",
   "scripts": {
