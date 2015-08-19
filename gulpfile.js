@@ -21,7 +21,7 @@ gulp.task('scripts', ['clean'], function() {
         .pipe(jshint())
         .pipe(jshint.reporter())
         .pipe(uglify())
-        .pipe(rename('jquery.seslider-' + p.version + '.min.js'))
+        .pipe(rename('jquery.seslider.min.js'))
         .pipe(insert.prepend(annotation))
         .pipe(gulp.dest(dest));
         ;
