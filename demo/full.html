@@ -10,6 +10,14 @@
         $(document).ready(function() {
             $('.slider').seSlider({
                 preventReversedCycle: true,
+                changeCallback: function(currentSlideIndex, toSlideIndex, direction) {
+                    console.log('Current slide index: ' + currentSlideIndex);
+                    console.log('To slide index: ' + toSlideIndex);
+                    console.log('Direction: ' + direction);
+                },
+                afterChangeCallback: function(newSlideIndex) {
+                    console.log('New slide index: ' + newSlideIndex);
+                },
                 playCallback: function() {
                     console.log('slideshoh started.');
                 },
