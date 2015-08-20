@@ -165,13 +165,13 @@
                 elapsedTime: 0
             };
 
+            if(slideshow.maxStep < 1)
+                return true;
+
             if(params.slideshowSteps !== null && params.slideshowSteps.length != slideshow.maxStep + 1)
                 throw new TypeError('The slideshowSteps parameter must have a length equal to the number of li tags in the slider.');
 
             slideshow.maxTime = params.slideshowSteps === null ? params.slideshowIntervalTime * (slideshow.maxStep + 1) : params.slideshowSteps[slideshow.maxStep];
-
-            if(obj.children('li').length === 1)
-                return true;
 
             obj.children('li').last().prependTo(obj);
             if(obj.children('li').length === 2)
