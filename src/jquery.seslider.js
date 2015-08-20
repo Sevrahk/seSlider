@@ -160,11 +160,15 @@
             var slideWidth = obj.children('li').width(),
                 slideshow = {
                 interval: false,
-                maxStep: obj.find('li').length - 1,
+                maxStep: obj.children('li').length - 1,
                 currStep: 0,
                 elapsedTime: 0
             };
-            slideshow.maxTime = params.slideshowSteps !== null ? params.slideshowSteps[slideshow.maxStep] : params.slideshowIntervalTime * (slideshow.maxStep + 1);
+
+            if(params.slideshowSteps !== null && params.slideshowSteps.length != slideshow.maxStep + 1)
+                throw new TypeError('The slideshowSteps parameter must have a length equal to the number of li tags in the slider.');
+
+            slideshow.maxTime = params.slideshowSteps === null ? params.slideshowIntervalTime * (slideshow.maxStep + 1) : params.slideshowSteps[slideshow.maxStep];
 
             if(obj.children('li').length === 1)
                 return true;
