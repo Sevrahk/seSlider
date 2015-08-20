@@ -12,6 +12,7 @@
             playCallback: null,
             pauseCallback: null,
             endCallback: null,
+            resetCallback: null,
             autoPlay: false,
             slideshowSoundTrack: null,
             slideshowSteps: null,
@@ -125,8 +126,10 @@
                 updateProgressBar(0);
                 updateSoundTrackTime(0);
 
-                if(reset !== true && typeof params.endCallback === 'function')
+                if(endReached === true && typeof params.endCallback === 'function')
                     params.endCallback();
+                else if(reset === true && typeof params.resetCallback === 'function')
+                    params.resetCallback();
             }
             else if(typeof params.pauseCallback === 'function')
                 params.pauseCallback();
