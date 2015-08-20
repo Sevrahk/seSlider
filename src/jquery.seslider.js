@@ -68,7 +68,7 @@
 
                 if(slideshow.currStep > slideshow.maxStep)
                 {
-                    slideshow.currStep = 1;
+                    slideshow.currStep = 0;
                     if(slideshow.interval !== false)
                     {
                         stopSlideShow(slider, slideshow, true, false);
