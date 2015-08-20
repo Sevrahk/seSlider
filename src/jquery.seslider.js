@@ -12,6 +12,7 @@
             playCallback: null,
             pauseCallback: null,
             endCallback: null,
+            resetCallback: null,
             autoPlay: false,
             slideshowSoundTrack: null,
             slideshowSteps: null,
@@ -68,7 +69,7 @@
 
                 if(slideshow.currStep > slideshow.maxStep)
                 {
-                    slideshow.currStep = 1;
+                    slideshow.currStep = 0;
                     if(slideshow.interval !== false)
                     {
                         stopSlideShow(slider, slideshow, true, false);
@@ -125,8 +126,10 @@
                 updateProgressBar(0);
                 updateSoundTrackTime(0);
 
-                if(reset !== true && typeof params.endCallback === 'function')
+                if(endReached === true && typeof params.endCallback === 'function')
                     params.endCallback();
+                else if(reset === true && typeof params.resetCallback === 'function')
+                    params.resetCallback();
             }
             else if(typeof params.pauseCallback === 'function')
                 params.pauseCallback();
@@ -157,14 +160,18 @@
             var slideWidth = obj.children('li').width(),
                 slideshow = {
                 interval: false,
-                maxStep: obj.find('li').length - 1,
+                maxStep: obj.children('li').length - 1,
                 currStep: 0,
                 elapsedTime: 0
             };
-            slideshow.maxTime = params.slideshowSteps !== null ? params.slideshowSteps[slideshow.maxStep] : params.slideshowIntervalTime * (slideshow.maxStep + 1);
 
-            if(obj.children('li').length === 1)
+            if(slideshow.maxStep < 1)
                 return true;
+
+            if(params.slideshowSteps !== null && params.slideshowSteps.length != slideshow.maxStep + 1)
+                throw new TypeError('The slideshowSteps parameter must have a length equal to the number of li tags in the slider.');
+
+            slideshow.maxTime = params.slideshowSteps === null ? params.slideshowIntervalTime * (slideshow.maxStep + 1) : params.slideshowSteps[slideshow.maxStep];
 
             obj.children('li').last().prependTo(obj);
             if(obj.children('li').length === 2)

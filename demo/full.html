@@ -19,13 +19,16 @@
                     console.log('New slide index: ' + newSlideIndex);
                 },
                 playCallback: function() {
-                    console.log('slideshoh started.');
+                    console.log('Slideshow started.');
                 },
                 pauseCallback: function() {
-                    console.log('slideshoh paused.');
+                    console.log('Slideshow paused.');
                 },
                 endCallback: function() {
-                    console.log('slideshoh ended.');
+                    console.log('Slideshow ended.');
+                },
+                resetCallback: function() {
+                    console.log('Slideshow reseted.');
                 },
                 progressBar: '.progressBar',
                 slideshowSteps: [2000, 4000, 8000, 10000]
@@ -44,6 +47,6 @@
         </ul>
     </div>
     <div class="progressBar"><div></div></div>
-    <a href="#" class="sliderPrevBtn">Previous</a> | <a href="#" class="sliderNextBtn">Next</a> | <a href="#" class="sliderPlayBtn">Play / pause</a> | <a href="#" class="sliderStopBtn">Stop</a>
+    <a href="#" class="sliderPrevBtn">Previous</a> | <a href="#" class="sliderNextBtn">Next</a> | <a href="#" class="sliderPlayBtn">Play / pause</a> | <a href="#" class="sliderResetBtn">Reset</a>
 </body>
 </html>

@@ -114,6 +114,10 @@ Function called when the slideShow is set to pause.
 Function called when the slideShow is ended.  
 *default: null*
 
+- **resetCallback**  
+Function called when the slideShow is reseted.  
+*default: null*
+
 - **slideshowSoundTrack**  
 The audio tag selector that runs with the slideshow.  
 *default: null*
@@ -124,7 +128,7 @@ If the value is set to null the slideshow will change to the next slide after ea
 *default: null*
 
 - **slideshowIntervalTime**  
-If `slideshowSteps` is null: The interval time between each slide change.
+If `slideshowSteps` is null: The interval time between each slide change.  
 If `slideshowSteps` is not null: The interval time between each step checking.  
 *default: 1000*
 
