@@ -189,7 +189,7 @@
             //Next button
             $(params.nextBtn).on('touchstart click', function(e) {
                 e.preventDefault();
-                if(obj.css('left') !== 'auto')
+                if(obj.css('left') !== 'auto' && obj.css('left') !== '0px')
                     return;
 
                 moveRight(obj, slideshow, true);
@@ -198,7 +198,7 @@
             //Prev button
             $(params.prevBtn).on('touchstart click', function(e) {
                 e.preventDefault();
-                if(obj.css('left') !== 'auto')
+                if(obj.css('left') !== 'auto' && obj.css('left') !== '0px')
                     return;
 
                 moveLeft(obj, slideshow);

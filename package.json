@@ -1,6 +1,6 @@
 {
   "name": "seslider",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "jQuery slider plugin for simple sliders, slideshows, and slideshows with soundtrack",
   "main": "src/jquery.seslider.js",
   "scripts": {
@@ -24,11 +24,12 @@
   },
   "homepage": "https://github.com/Sevrahk/seSlider",
   "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-insert": "^0.4.0",
-    "gulp-jshint": "^1.11.2",
+    "gulp": "^3.9.1",
+    "gulp-insert": "^0.5.0",
+    "gulp-jshint": "^2.0.1",
+    "jshint": "^2.9.2",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.2.0",
-    "rimraf": "^2.4.2"
+    "gulp-uglify": "^1.5.3",
+    "rimraf": "^2.5.2"
   }
 }
